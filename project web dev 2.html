@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Slider</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { display: flex; justify-content: center; align-items: center; height: 100vh; background-color: #f4f4f4; }
+        .slider-container { position: relative; width: 80%; max-width: 600px; overflow: hidden; border-radius: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); }
+        .slides { display: flex; position: relative; }
+        .slide { min-width: 100%; opacity: 0; transition: opacity 1s ease-in-out; position: absolute; width: 100%; }
+        .slide img { width: 100%; border-radius: 10px; }
+        .active-slide { opacity: 1; position: relative; }
+        .caption { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); background: rgba(0, 0, 0, 0.6); color: white; padding: 5px 10px; border-radius: 5px; font-size: 14px; }
+        .prev, .next { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0, 0, 0, 0.5); color: white; border: none; padding: 10px; cursor: pointer; border-radius: 5px; }
+        .prev { left: 10px; }
+        .next { right: 10px; }
+        .dots { text-align: center; margin-top: 10px; }
+        .dot { display: inline-block; width: 10px; height: 10px; margin: 5px; background: #bbb; border-radius: 50%; cursor: pointer; }
+        .active { background: #333; }
+    </style>
+</head>
+<body>
+    <div class="slider-container">
+        <div class="slides">
+            <div class="slide active-slide"><img src="https://media.istockphoto.com/id/485371557/photo/twilight-at-spirit-island.jpg?s=612x612&w=0&k=20&c=FSGliJ4EKFP70Yjpzso0HfRR4WwflC6GKfl4F3Hj7fk=" alt="Image 1"><div class="caption">Adventure for life</div></div>
+            <div class="slide"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT72QVveWawR9SKadP5lh6ul8Qe1pHgFZOxPg&s" alt="Image 2"><div class="caption">Travelling</div></div>
+            <div class="slide"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT5uoY-6bJyGxzbtGDAGyUUu2Q_7nse9y-0Kg&s" alt="Image 3"><div class="caption">Mountain</div></div>
+        </div>
+        <button class="prev">&#10094;</button>
+        <button class="next">&#10095;</button>
+        <div class="dots"></div>
+    </div>
+
+    <script>
+        let slides = document.querySelectorAll('.slide');
+        let index = 0;
+        const prev = document.querySelector('.prev');
+        const next = document.querySelector('.next');
+        const dotsContainer = document.querySelector('.dots');
+        
+        for (let i = 0; i < slides.length; i++) {
+            let dot = document.createElement('span');
+            dot.classList.add('dot');
+            dotsContainer.appendChild(dot);
+        }
+        const dots = document.querySelectorAll('.dot');
+        dots[index].classList.add('active');
+
+        function showSlide(i) {
+            slides[index].classList.remove('active-slide');
+            dots[index].classList.remove('active');
+            index = (i + slides.length) % slides.length;
+            slides[index].classList.add('active-slide');
+            dots[index].classList.add('active');
+        }
+
+        prev.addEventListener('click', () => showSlide(index - 1));
+        next.addEventListener('click', () => showSlide(index + 1));
+        dots.forEach((dot, i) => dot.addEventListener('click', () => showSlide(i)));
+
+        let touchStartX = 0;
+        let touchEndX = 0;
+        document.querySelector('.slider-container').addEventListener('touchstart', e => touchStartX = e.changedTouches[0].screenX);
+        document.querySelector('.slider-container').addEventListener('touchend', e => {
+            touchEndX = e.changedTouches[0].screenX;
+            if (touchStartX - touchEndX > 50) showSlide(index + 1);
+            if (touchEndX - touchStartX > 50) showSlide(index - 1);
+        });
+
+        setInterval(() => showSlide(index + 1), 3000);
+    </script>
+</body>
+</html>
